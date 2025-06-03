@@ -1,3 +1,40 @@
+# Interactive Financial Statements
+
+A React application that displays interactive financial statements for publicly traded companies.
+
+## Setup
+
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Create a `.env` file in the root directory with your Alpha Vantage API key:
+   ```
+   REACT_APP_ALPHA_VANTAGE_API_KEY=your_api_key_here
+   ```
+   You can get a free API key from [Alpha Vantage](https://www.alphavantage.co/support/#api-key)
+
+4. Start the development server:
+   ```bash
+   npm start
+   ```
+
+## Environment Variables
+
+- `REACT_APP_ALPHA_VANTAGE_API_KEY`: Your Alpha Vantage API key
+
+## Features
+
+- View income statements, balance sheets, and cash flow statements
+- Search for any publicly traded company by ticker symbol
+- Interactive data visualization
+- Real-time financial data from Alpha Vantage
+
+## Security
+
+This application uses environment variables to store sensitive information like API keys. Never commit your `.env` file to version control. A `.env.example` file is provided as a template for required environment variables.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

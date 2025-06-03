@@ -5,91 +5,6 @@ const TickerInput = ({ onDataLoaded }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const generateFinancialData = (ticker) => {
-    // Generate random but realistic-looking financial data
-    const baseRevenue = Math.floor(Math.random() * 500000000000) + 10000000000;
-    const costOfRevenue = Math.floor(baseRevenue * 0.6);
-    const grossProfit = baseRevenue - costOfRevenue;
-    const operatingExpense = Math.floor(baseRevenue * 0.2);
-    const operatingIncome = grossProfit - operatingExpense;
-    const interestExpense = Math.floor(baseRevenue * 0.02);
-    const otherIncomeExpense = Math.floor(baseRevenue * 0.01);
-    const incomeBeforeTax = operatingIncome - interestExpense + otherIncomeExpense;
-    const incomeTaxExpense = Math.floor(incomeBeforeTax * 0.2);
-    const netIncome = incomeBeforeTax - incomeTaxExpense;
-    
-    // Calculate shares with dilution
-    const basicShares = 1000000000;
-    const dilutedShares = Math.floor(basicShares * 1.1); // 10% more shares for dilution
-
-    // Calculate cash flow items
-    const depreciation = Math.floor(baseRevenue * 0.05);
-    const changeToAccountReceivables = -Math.floor(baseRevenue * 0.02);
-    const changeToInventory = -Math.floor(baseRevenue * 0.01);
-    const changeToLiabilities = Math.floor(baseRevenue * 0.03);
-    const changeToOperatingActivities = netIncome + depreciation + changeToAccountReceivables + 
-                                      changeToInventory + changeToLiabilities;
-
-    return {
-      incomeStatement: {
-        totalRevenue: baseRevenue,
-        costOfRevenue: costOfRevenue,
-        grossProfit: grossProfit,
-        researchDevelopment: Math.floor(baseRevenue * 0.1),
-        sellingGeneralAndAdmin: Math.floor(baseRevenue * 0.1),
-        operatingExpense: operatingExpense,
-        operatingIncome: operatingIncome,
-        interestExpense: interestExpense,
-        otherIncomeExpense: otherIncomeExpense,
-        incomeBeforeTax: incomeBeforeTax,
-        incomeTaxExpense: incomeTaxExpense,
-        netIncome: netIncome,
-        eps: (netIncome / basicShares).toFixed(2),
-        epsDiluted: (netIncome / dilutedShares).toFixed(2),
-        weightedAverageShares: basicShares,
-        weightedAverageSharesDiluted: dilutedShares
-      },
-      balanceSheet: {
-        cash: Math.floor(baseRevenue * 0.2),
-        shortTermInvestments: Math.floor(baseRevenue * 0.3),
-        netReceivables: Math.floor(baseRevenue * 0.15),
-        inventory: Math.floor(baseRevenue * 0.1),
-        otherCurrentAssets: Math.floor(baseRevenue * 0.1),
-        longTermInvestments: Math.floor(baseRevenue * 0.4),
-        propertyPlantEquipment: Math.floor(baseRevenue * 0.3),
-        goodwill: Math.floor(baseRevenue * 0.1),
-        intangibleAssets: Math.floor(baseRevenue * 0.05),
-        otherAssets: Math.floor(baseRevenue * 0.2),
-        accountsPayable: Math.floor(baseRevenue * 0.2),
-        shortTermDebt: Math.floor(baseRevenue * 0.1),
-        otherCurrentLiabilities: Math.floor(baseRevenue * 0.15),
-        longTermDebt: Math.floor(baseRevenue * 0.3),
-        otherLiabilities: Math.floor(baseRevenue * 0.2),
-        commonStock: Math.floor(baseRevenue * 0.2),
-        retainedEarnings: Math.floor(baseRevenue * 0.1),
-        treasuryStock: 0,
-        capitalSurplus: Math.floor(baseRevenue * 0.1),
-        otherStockholderEquity: Math.floor(baseRevenue * 0.05)
-      },
-      cashFlowStatement: {
-        netIncome: netIncome,
-        depreciation: depreciation,
-        changeToNetIncome: 0,
-        changeToAccountReceivables: changeToAccountReceivables,
-        changeToLiabilities: changeToLiabilities,
-        changeToInventory: changeToInventory,
-        changeToOperatingActivities: changeToOperatingActivities,
-        capitalExpenditures: -Math.floor(baseRevenue * 0.1),
-        investments: -Math.floor(baseRevenue * 0.2),
-        dividendsPaid: -Math.floor(netIncome * 0.2),
-        salePurchaseOfStock: -Math.floor(netIncome * 0.3),
-        netBorrowings: Math.floor(baseRevenue * 0.1),
-        otherCashflowsFromFinancing: 0,
-        effectOfExchangeRate: 0
-      }
-    };
-  };
-
   const emptyFinancialData = {
     incomeStatement: {
       totalRevenue: 0,
@@ -154,6 +69,141 @@ const TickerInput = ({ onDataLoaded }) => {
     onDataLoaded(emptyFinancialData);
   }, []);
 
+  const fetchFinancialData = async (ticker) => {
+    try {
+      // Use Alpha Vantage API
+      const apiKey = process.env.REACT_APP_ALPHA_VANTAGE_API_KEY;
+      console.log('Environment variables:', {
+        NODE_ENV: process.env.NODE_ENV,
+        hasApiKey: !!apiKey,
+        apiKeyLength: apiKey?.length
+      });
+      
+      if (!apiKey) {
+        throw new Error('API key not found. Please check your environment configuration.');
+      }
+      const baseUrl = 'https://www.alphavantage.co/query';
+      
+      // Fetch income statement
+      const incomeResponse = await fetch(`${baseUrl}?function=INCOME_STATEMENT&symbol=${ticker}&apikey=${apiKey}`);
+      if (!incomeResponse.ok) {
+        const errorText = await incomeResponse.text();
+        console.error('Income Statement Error:', errorText);
+        throw new Error(`Failed to fetch income statement: ${incomeResponse.statusText}`);
+      }
+      const incomeData = await incomeResponse.json();
+      console.log('Income Statement Response:', incomeData);
+      
+      // Check for API error messages
+      if (incomeData.Note) {
+        throw new Error(`API Error: ${incomeData.Note}`);
+      }
+      if (incomeData.Information) {
+        throw new Error(`API Information: ${incomeData.Information}`);
+      }
+      
+      // Fetch balance sheet
+      const balanceResponse = await fetch(`${baseUrl}?function=BALANCE_SHEET&symbol=${ticker}&apikey=${apiKey}`);
+      if (!balanceResponse.ok) {
+        const errorText = await balanceResponse.text();
+        console.error('Balance Sheet Error:', errorText);
+        throw new Error(`Failed to fetch balance sheet: ${balanceResponse.statusText}`);
+      }
+      const balanceData = await balanceResponse.json();
+      console.log('Balance Sheet Response:', balanceData);
+      
+      // Fetch cash flow
+      const cashFlowResponse = await fetch(`${baseUrl}?function=CASH_FLOW&symbol=${ticker}&apikey=${apiKey}`);
+      if (!cashFlowResponse.ok) {
+        const errorText = await cashFlowResponse.text();
+        console.error('Cash Flow Error:', errorText);
+        throw new Error(`Failed to fetch cash flow: ${cashFlowResponse.statusText}`);
+      }
+      const cashFlowData = await cashFlowResponse.json();
+      console.log('Cash Flow Response:', cashFlowData);
+
+      // Check for API errors
+      if (incomeData.Note || balanceData.Note || cashFlowData.Note) {
+        throw new Error('API rate limit reached. Please try again in a minute.');
+      }
+
+      // Get the most recent quarter's data
+      const incomeStatement = incomeData.quarterlyReports?.[0];
+      const balanceSheet = balanceData.quarterlyReports?.[0];
+      const cashFlow = cashFlowData.quarterlyReports?.[0];
+
+      if (!incomeStatement || !balanceSheet || !cashFlow) {
+        throw new Error(`No data available for ${ticker}. Please check if the ticker symbol is correct.`);
+      }
+
+      // Transform the data to match our format
+      const transformedData = {
+        incomeStatement: {
+          totalRevenue: parseFloat(incomeStatement.totalRevenue) || 0,
+          costOfRevenue: parseFloat(incomeStatement.costOfRevenue) || 0,
+          grossProfit: parseFloat(incomeStatement.grossProfit) || 0,
+          researchDevelopment: parseFloat(incomeStatement.researchAndDevelopment) || 0,
+          sellingGeneralAndAdmin: parseFloat(incomeStatement.sellingGeneralAndAdministrative) || 0,
+          operatingExpense: parseFloat(incomeStatement.operatingExpenses) || 0,
+          operatingIncome: parseFloat(incomeStatement.operatingIncome) || 0,
+          interestExpense: parseFloat(incomeStatement.interestExpense) || 0,
+          otherIncomeExpense: parseFloat(incomeStatement.otherNonOperatingIncome) || 0,
+          incomeBeforeTax: parseFloat(incomeStatement.incomeBeforeTax) || 0,
+          incomeTaxExpense: parseFloat(incomeStatement.incomeTaxExpense) || 0,
+          netIncome: parseFloat(incomeStatement.netIncome) || 0,
+          eps: parseFloat(incomeStatement.basicEPS) || 0,
+          epsDiluted: parseFloat(incomeStatement.dilutedEPS) || 0,
+          weightedAverageShares: parseFloat(incomeStatement.basicAverageShares) || 0,
+          weightedAverageSharesDiluted: parseFloat(incomeStatement.dilutedAverageShares) || 0
+        },
+        balanceSheet: {
+          cash: parseFloat(balanceSheet.cashAndCashEquivalentsAtCarryingValue) || 0,
+          shortTermInvestments: parseFloat(balanceSheet.shortTermInvestments) || 0,
+          netReceivables: parseFloat(balanceSheet.netReceivables) || 0,
+          inventory: parseFloat(balanceSheet.inventory) || 0,
+          otherCurrentAssets: parseFloat(balanceSheet.otherCurrentAssets) || 0,
+          longTermInvestments: parseFloat(balanceSheet.longTermInvestments) || 0,
+          propertyPlantEquipment: parseFloat(balanceSheet.propertyPlantEquipmentNet) || 0,
+          goodwill: parseFloat(balanceSheet.goodwill) || 0,
+          intangibleAssets: parseFloat(balanceSheet.intangibleAssets) || 0,
+          otherAssets: parseFloat(balanceSheet.otherAssets) || 0,
+          accountsPayable: parseFloat(balanceSheet.accountPayables) || 0,
+          shortTermDebt: parseFloat(balanceSheet.shortTermDebt) || 0,
+          otherCurrentLiabilities: parseFloat(balanceSheet.otherCurrentLiabilities) || 0,
+          longTermDebt: parseFloat(balanceSheet.longTermDebt) || 0,
+          otherLiabilities: parseFloat(balanceSheet.otherLiabilities) || 0,
+          commonStock: parseFloat(balanceSheet.commonStock) || 0,
+          retainedEarnings: parseFloat(balanceSheet.retainedEarnings) || 0,
+          treasuryStock: parseFloat(balanceSheet.treasuryStock) || 0,
+          capitalSurplus: parseFloat(balanceSheet.additionalPaidInCapital) || 0,
+          otherStockholderEquity: parseFloat(balanceSheet.otherStockholdersEquity) || 0
+        },
+        cashFlowStatement: {
+          netIncome: parseFloat(cashFlow.netIncome) || 0,
+          depreciation: parseFloat(cashFlow.depreciation) || 0,
+          changeToNetIncome: parseFloat(cashFlow.changeInNetIncome) || 0,
+          changeToAccountReceivables: parseFloat(cashFlow.changeInReceivables) || 0,
+          changeToLiabilities: parseFloat(cashFlow.changeInLiabilities) || 0,
+          changeToInventory: parseFloat(cashFlow.changeInInventory) || 0,
+          changeToOperatingActivities: parseFloat(cashFlow.operatingCashflow) || 0,
+          capitalExpenditures: parseFloat(cashFlow.capitalExpenditures) || 0,
+          investments: parseFloat(cashFlow.investments) || 0,
+          dividendsPaid: parseFloat(cashFlow.dividendPayout) || 0,
+          salePurchaseOfStock: parseFloat(cashFlow.salePurchaseOfStock) || 0,
+          netBorrowings: parseFloat(cashFlow.netBorrowings) || 0,
+          otherCashflowsFromFinancing: parseFloat(cashFlow.otherCashflowsFromFinancing) || 0,
+          effectOfExchangeRate: parseFloat(cashFlow.effectOfExchangeRate) || 0
+        }
+      };
+
+      console.log('Transformed Data:', transformedData);
+      return transformedData;
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      throw new Error(error.message || `Failed to fetch data for ${ticker}. Please check if the ticker symbol is correct.`);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!ticker) {
@@ -165,13 +215,7 @@ const TickerInput = ({ onDataLoaded }) => {
     setError('');
 
     try {
-      // Simulate a slight delay to show loading state
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      // Generate financial data for the entered ticker
-      const data = generateFinancialData(ticker);
-
-      // Call the parent component's callback with the generated data
+      const data = await fetchFinancialData(ticker.toUpperCase());
       onDataLoaded(data);
     } catch (err) {
       setError(err.message || 'Failed to fetch financial data');
@@ -188,7 +232,7 @@ const TickerInput = ({ onDataLoaded }) => {
             type="text"
             value={ticker}
             onChange={(e) => setTicker(e.target.value.toUpperCase())}
-            placeholder="Enter any stock ticker (e.g., AAPL, GOOGL, TSLA)"
+            placeholder="Enter any stock ticker (e.g., AAPL, GOOGL, MSFT)"
             className="ticker-field"
           />
           <button 
