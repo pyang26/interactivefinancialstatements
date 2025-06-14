@@ -375,7 +375,13 @@ function BalanceSheet({ initialData }) {
     (balanceData.inventory || 0) + 
     (balanceData.otherCurrentAssets || 0));
   
-  const longTermAssets = (balanceData.totalAssets || 0) - currentAssets;
+  const longTermAssets = balanceData.totalAssets ? 
+    (balanceData.totalAssets - currentAssets) :
+    ((balanceData.longTermInvestments || 0) + 
+    (balanceData.propertyPlantEquipment || 0) + 
+    (balanceData.goodwill || 0) + 
+    (balanceData.intangibleAssets || 0) + 
+    (balanceData.otherAssets || 0));
   
   const totalAssets = balanceData.totalAssets || (currentAssets + longTermAssets);
   
@@ -384,7 +390,10 @@ function BalanceSheet({ initialData }) {
     (balanceData.shortTermDebt || 0) + 
     (balanceData.otherCurrentLiabilities || 0));
   
-  const longTermLiabilities = (balanceData.totalLiabilities || 0) - currentLiabilities;
+  const longTermLiabilities = balanceData.totalLiabilities ? 
+    (balanceData.totalLiabilities - currentLiabilities) :
+    ((balanceData.longTermDebt || 0) + 
+    (balanceData.otherLiabilities || 0));
   
   const totalLiabilities = balanceData.totalLiabilities || (currentLiabilities + longTermLiabilities);
   
