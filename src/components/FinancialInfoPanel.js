@@ -11,15 +11,6 @@ function FinancialInfoPanel({ category, explanation, importance, analysis, ratio
           <div className="info-content">
             <h3>What is {category}?</h3>
             <p>{explanation}</p>
-            <div className="info-example">
-              <h4>Example:</h4>
-              <p>For a company selling smartphones:</p>
-              <ul>
-                <li>If they sell 1 million phones at $800 each</li>
-                <li>Total Revenue = $800 million</li>
-                <li>This represents the total income before any costs are deducted</li>
-              </ul>
-            </div>
           </div>
         );
       case 'importance':

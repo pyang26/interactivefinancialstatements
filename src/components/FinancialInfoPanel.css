@@ -4,79 +4,80 @@
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: var(--surface-color);
-  border-radius: 16px;
   padding: 2rem;
-  width: 90%;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   max-width: 800px;
-  max-height: 80vh;
+  width: 90%;
+  max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  z-index: 1000;
+  z-index: 9999;
 }
 
 .info-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 2rem;
 }
 
 .info-header h2 {
-  color: var(--primary-color);
+  color: var(--text-color);
   margin: 0;
   font-size: 1.8rem;
-  text-transform: capitalize;
 }
 
 .close-button {
   background: none;
   border: none;
-  color: var(--text-secondary);
-  font-size: 2rem;
+  color: var(--text-color);
+  font-size: 1.5rem;
   cursor: pointer;
   padding: 0.5rem;
   line-height: 1;
-  transition: color var(--transition-speed) ease;
+  border-radius: 50%;
+  transition: all var(--transition-speed) ease;
 }
 
 .close-button:hover {
-  color: var(--text-color);
+  background-color: var(--hover-color);
+  transform: rotate(90deg);
 }
 
 .info-tabs {
   display: flex;
   gap: 1rem;
   margin-bottom: 2rem;
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: 1rem;
   flex-wrap: wrap;
 }
 
 .tab-button {
   background: none;
-  border: none;
-  color: var(--text-secondary);
-  padding: 0.8rem 1.2rem;
+  border: 2px solid var(--secondary-color);
+  color: var(--text-color);
+  padding: 0.8rem 1.5rem;
+  border-radius: 12px;
   cursor: pointer;
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 600;
   transition: all var(--transition-speed) ease;
-  border-radius: 8px;
-  min-width: 120px;
-  text-align: center;
+  min-width: 150px;
+  position: relative;
+  overflow: hidden;
 }
 
 .tab-button:hover {
+  background-color: var(--secondary-color);
   color: var(--text-color);
-  background-color: var(--hover-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .tab-button.active {
-  color: var(--primary-color);
-  background-color: var(--hover-color);
-  box-shadow: 0 2px 8px rgba(0, 122, 255, 0.2);
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+  border-color: var(--secondary-color);
+  box-shadow: 0 4px 12px rgba(0, 188, 212, 0.3);
 }
 
 .info-content {
@@ -84,26 +85,27 @@
 }
 
 .info-content h3 {
-  color: var(--primary-color);
+  color: var(--text-color);
+  font-size: 1.5rem;
   margin-bottom: 1.5rem;
-  font-size: 1.4rem;
-  text-transform: capitalize;
 }
 
 .info-content p {
+  color: var(--text-color);
   line-height: 1.6;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .info-example {
-  background-color: var(--background-color);
+  background-color: var(--hover-color);
   padding: 1.5rem;
-  border-radius: 12px;
+  border-radius: 8px;
   margin-top: 1.5rem;
 }
 
 .info-example h4 {
-  color: var(--primary-color);
+  color: var(--text-color);
+  margin-top: 0;
   margin-bottom: 1rem;
 }
 
@@ -113,76 +115,64 @@
 }
 
 .info-example li {
+  color: var(--text-color);
   margin-bottom: 0.5rem;
 }
 
 .importance-points {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1.5rem;
   margin-top: 1.5rem;
 }
 
 .importance-point {
-  background-color: var(--background-color);
+  background-color: var(--hover-color);
   padding: 1.5rem;
-  border-radius: 12px;
-  transition: transform var(--transition-speed) ease;
-}
-
-.importance-point:hover {
-  transform: translateY(-2px);
+  border-radius: 8px;
 }
 
 .importance-point h4 {
-  color: var(--primary-color);
-  margin-bottom: 0.5rem;
+  color: var(--text-color);
+  margin-top: 0;
+  margin-bottom: 1rem;
 }
 
 .analysis-steps {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1.5rem;
   margin-top: 1.5rem;
 }
 
 .analysis-step {
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  background-color: var(--background-color);
+  background-color: var(--hover-color);
   padding: 1.5rem;
-  border-radius: 12px;
-  transition: transform var(--transition-speed) ease;
-}
-
-.analysis-step:hover {
-  transform: translateX(4px);
+  border-radius: 8px;
+  position: relative;
 }
 
 .step-number {
-  background-color: var(--primary-color);
-  color: white;
-  width: 24px;
-  height: 24px;
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  width: 30px;
+  height: 30px;
+  background-color: var(--secondary-color);
+  color: var(--text-color);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  flex-shrink: 0;
 }
 
 .analysis-step h4 {
-  color: var(--primary-color);
-  margin: 0 0 0.5rem 0;
+  color: var(--text-color);
+  margin-top: 0;
+  margin-bottom: 1rem;
 }
 
-.analysis-step p {
-  margin: 0;
-}
-
-/* Ratios Section */
 .ratios-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -191,27 +181,22 @@
 }
 
 .ratio-card {
-  background-color: var(--background-color);
+  background-color: var(--hover-color);
   padding: 1.5rem;
-  border-radius: 12px;
-  transition: transform var(--transition-speed) ease;
-}
-
-.ratio-card:hover {
-  transform: translateY(-2px);
+  border-radius: 8px;
 }
 
 .ratio-card h4 {
-  color: var(--primary-color);
-  margin: 0 0 1rem 0;
-  font-size: 1.1rem;
+  color: var(--text-color);
+  margin-top: 0;
+  margin-bottom: 1rem;
 }
 
 .ratio-formula {
   background-color: var(--surface-color);
   padding: 1rem;
-  border-radius: 8px;
-  margin-bottom: 1rem;
+  border-radius: 4px;
+  margin: 1rem 0;
 }
 
 .formula-label {
@@ -222,8 +207,8 @@
 }
 
 .formula {
-  font-family: 'SF Mono', 'Roboto Mono', monospace;
-  color: var(--primary-color);
+  color: var(--text-color);
+  font-family: monospace;
   font-size: 1rem;
 }
 
@@ -236,31 +221,26 @@
 
 @media (max-width: 768px) {
   .financial-info-panel {
+    padding: 1rem;
     width: 95%;
-    padding: 1.5rem;
+  }
+
+  .info-header h2 {
+    font-size: 1.5rem;
   }
 
   .info-tabs {
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .tab-button {
-    flex: 1;
-    min-width: 120px;
-    padding: 0.6rem 1rem;
-    font-size: 0.9rem;
+    width: 100%;
   }
 
   .importance-points,
+  .analysis-steps,
   .ratios-container {
     grid-template-columns: 1fr;
-  }
-
-  .ratio-card {
-    padding: 1.2rem;
-  }
-
-  .formula {
-    font-size: 0.9rem;
   }
 } 

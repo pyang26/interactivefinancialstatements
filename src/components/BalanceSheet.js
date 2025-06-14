@@ -4,9 +4,9 @@ import FinancialInfoPanel from './FinancialInfoPanel';
 function BalanceSheet({ initialData }) {
   const [balanceData, setBalanceData] = useState({
     // Current Assets
-    cashAndEquivalents: 0,
+    cash: 0,
     shortTermInvestments: 0,
-    accountsReceivable: 0,
+    netReceivables: 0,
     inventory: 0,
     otherCurrentAssets: 0,
     // Long-term Assets
@@ -47,7 +47,7 @@ function BalanceSheet({ initialData }) {
   };
 
   const categoryExplanations = {
-    cashAndEquivalents: {
+    cash: {
       short: "Cash and highly liquid investments that can be converted to cash immediately",
       long: "Cash and Cash Equivalents represent the most liquid assets of a company, including physical cash, bank deposits, and short-term investments that can be converted to cash within 90 days. This category is crucial for assessing a company's ability to meet its short-term obligations and fund its operations.",
       importance: "Cash and Cash Equivalents are essential for a company's day-to-day operations and financial stability. They provide a buffer against unexpected expenses and economic downturns.",
@@ -78,7 +78,7 @@ function BalanceSheet({ initialData }) {
         }
       ]
     },
-    accountsReceivable: {
+    netReceivables: {
       short: "Money owed to the company by customers for goods or services delivered",
       long: "Accounts Receivable represents money that customers owe to the company for goods or services that have been delivered but not yet paid for. It's a key component of working capital and reflects the company's credit and collection policies.",
       importance: "Accounts Receivable is crucial for understanding a company's cash flow cycle and its ability to collect payments from customers.",
@@ -368,36 +368,34 @@ function BalanceSheet({ initialData }) {
   };
 
   // Calculate totals
-  const currentAssets = (balanceData.cashAndEquivalents || 0) + 
+  const currentAssets = balanceData.totalCurrentAssets || 
+    ((balanceData.cash || 0) + 
     (balanceData.shortTermInvestments || 0) + 
-    (balanceData.accountsReceivable || 0) + 
+    (balanceData.netReceivables || 0) + 
     (balanceData.inventory || 0) + 
-    (balanceData.otherCurrentAssets || 0);
+    (balanceData.otherCurrentAssets || 0));
   
-  const longTermAssets = (balanceData.longTermInvestments || 0) + 
-    (balanceData.propertyPlantEquipment || 0) + 
-    (balanceData.goodwill || 0) + 
-    (balanceData.intangibleAssets || 0) + 
-    (balanceData.otherAssets || 0);
+  const longTermAssets = (balanceData.totalAssets || 0) - currentAssets;
   
-  const totalAssets = currentAssets + longTermAssets;
+  const totalAssets = balanceData.totalAssets || (currentAssets + longTermAssets);
   
-  const currentLiabilities = (balanceData.accountsPayable || 0) + 
+  const currentLiabilities = balanceData.totalCurrentLiabilities || 
+    ((balanceData.accountsPayable || 0) + 
     (balanceData.shortTermDebt || 0) + 
-    (balanceData.otherCurrentLiabilities || 0);
+    (balanceData.otherCurrentLiabilities || 0));
   
-  const longTermLiabilities = (balanceData.longTermDebt || 0) + 
-    (balanceData.otherLiabilities || 0);
+  const longTermLiabilities = (balanceData.totalLiabilities || 0) - currentLiabilities;
   
-  const totalLiabilities = currentLiabilities + longTermLiabilities;
+  const totalLiabilities = balanceData.totalLiabilities || (currentLiabilities + longTermLiabilities);
   
-  const stockholderEquity = (balanceData.commonStock || 0) + 
+  const stockholderEquity = balanceData.totalStockholderEquity || 
+    ((balanceData.commonStock || 0) + 
     (balanceData.retainedEarnings || 0) + 
     (balanceData.treasuryStock || 0) + 
     (balanceData.capitalSurplus || 0) + 
-    (balanceData.otherStockholderEquity || 0);
+    (balanceData.otherStockholderEquity || 0));
   
-  const totalLiabilitiesAndEquity = totalLiabilities + stockholderEquity;
+  const totalLiabilitiesAndEquity = balanceData.totalLiabilitiesAndStockholdersEquity || (totalLiabilities + stockholderEquity);
 
   const handleCategoryClick = (category) => {
     setSelectedCategory(category);
@@ -427,17 +425,17 @@ function BalanceSheet({ initialData }) {
           </tr>
           <tr>
             <td 
-              onClick={() => handleCategoryClick('cashAndEquivalents')}
+              onClick={() => handleCategoryClick('cash')}
               className="clickable-category"
-              data-tooltip={categoryExplanations.cashAndEquivalents.short}
+              data-tooltip={categoryExplanations.cash.short}
             >
-              {formatCategoryName('cashAndEquivalents')}
+              {formatCategoryName('cash')}
             </td>
             <td>
               <input
                 type="number"
-                value={balanceData.cashAndEquivalents}
-                onChange={(e) => handleChange('cashAndEquivalents', e.target.value)}
+                value={balanceData.cash}
+                onChange={(e) => handleChange('cash', e.target.value)}
               />
             </td>
           </tr>
@@ -459,17 +457,17 @@ function BalanceSheet({ initialData }) {
           </tr>
           <tr>
             <td 
-              onClick={() => handleCategoryClick('accountsReceivable')}
+              onClick={() => handleCategoryClick('netReceivables')}
               className="clickable-category"
-              data-tooltip={categoryExplanations.accountsReceivable.short}
+              data-tooltip={categoryExplanations.netReceivables.short}
             >
-              {formatCategoryName('accountsReceivable')}
+              {formatCategoryName('netReceivables')}
             </td>
             <td>
               <input
                 type="number"
-                value={balanceData.accountsReceivable}
-                onChange={(e) => handleChange('accountsReceivable', e.target.value)}
+                value={balanceData.netReceivables}
+                onChange={(e) => handleChange('netReceivables', e.target.value)}
               />
             </td>
           </tr>

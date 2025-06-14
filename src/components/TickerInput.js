@@ -71,7 +71,6 @@ const TickerInput = ({ onDataLoaded }) => {
 
   const fetchFinancialData = async (ticker) => {
     try {
-      // Use Alpha Vantage API
       const apiKey = process.env.REACT_APP_ALPHA_VANTAGE_API_KEY;
       console.log('Environment variables:', {
         NODE_ENV: process.env.NODE_ENV,
@@ -176,7 +175,13 @@ const TickerInput = ({ onDataLoaded }) => {
           retainedEarnings: parseFloat(balanceSheet.retainedEarnings) || 0,
           treasuryStock: parseFloat(balanceSheet.treasuryStock) || 0,
           capitalSurplus: parseFloat(balanceSheet.additionalPaidInCapital) || 0,
-          otherStockholderEquity: parseFloat(balanceSheet.otherStockholdersEquity) || 0
+          otherStockholderEquity: parseFloat(balanceSheet.otherStockholdersEquity) || 0,
+          totalCurrentAssets: parseFloat(balanceSheet.totalCurrentAssets) || 0,
+          totalAssets: parseFloat(balanceSheet.totalAssets) || 0,
+          totalCurrentLiabilities: parseFloat(balanceSheet.totalCurrentLiabilities) || 0,
+          totalLiabilities: parseFloat(balanceSheet.totalLiabilities) || 0,
+          totalStockholderEquity: parseFloat(balanceSheet.totalStockholderEquity) || 0,
+          totalLiabilitiesAndStockholdersEquity: parseFloat(balanceSheet.totalLiabilitiesAndStockholdersEquity) || 0
         },
         cashFlowStatement: {
           netIncome: parseFloat(cashFlow.netIncome) || 0,

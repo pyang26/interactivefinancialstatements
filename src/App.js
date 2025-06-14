@@ -1,119 +1,123 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import IncomeStatement from './components/IncomeStatement';
 import BalanceSheet from './components/BalanceSheet';
-import CashFlowStatement from './components/CashFlowStatement';
+import CashFlow from './components/CashFlow';
 import TickerInput from './components/TickerInput';
 import About from './components/About';
+import FinancialRatios from './components/FinancialRatios';
+import Settings from './components/Settings';
 
 function App() {
-  const [activeStatement, setActiveStatement] = useState('income');
+  const [activeTab, setActiveTab] = useState('balance');
   const [isLoading, setIsLoading] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(new Date());
   const [financialData, setFinancialData] = useState(null);
-  const [activePage, setActivePage] = useState('main'); // 'main' or 'about'
+  const [theme, setTheme] = useState({
+    darkMode: false,
+    secondaryColor: '#00bcd4'
+  });
 
-  const handleStatementChange = (statement) => {
-    setActiveStatement(statement);
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      setLastUpdated(new Date());
-    }, 500);
+  useEffect(() => {
+    // Load saved theme preferences
+    const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+    const savedColor = localStorage.getItem('secondaryColor') || '#00bcd4';
+    setTheme({
+      darkMode: savedDarkMode,
+      secondaryColor: savedColor
+    });
+  }, []);
+
+  const handleThemeChange = (newTheme) => {
+    setTheme(newTheme);
+    // Update CSS variables
+    document.documentElement.style.setProperty('--secondary-color', newTheme.secondaryColor);
+    if (newTheme.darkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
   };
 
   const handleDataLoaded = (data) => {
-    console.log('Data loaded:', data);
     setFinancialData(data);
     setLastUpdated(new Date());
   };
 
-  const renderStatement = () => {
-    if (isLoading) {
-      return (
-        <div className="loading-container">
-          <div className="loading"></div>
-        </div>
-      );
-    }
-
-    switch (activeStatement) {
-      case 'income':
-        return <IncomeStatement initialData={financialData?.incomeStatement} />;
-      case 'balance':
-        return <BalanceSheet initialData={financialData?.balanceSheet} />;
-      case 'cashflow':
-        return <CashFlowStatement initialData={financialData?.cashFlowStatement} />;
-      default:
-        return null;
-    }
-  };
-
-  const renderContent = () => {
-    if (activePage === 'about') {
-      return <About />;
-    }
-
-    return (
-      <>
-        <TickerInput onDataLoaded={handleDataLoaded} />
-        
-        <div className="nav-buttons">
-          <button
-            className={`nav-button ${activeStatement === 'income' ? 'active' : ''}`}
-            onClick={() => handleStatementChange('income')}
-            data-tooltip="View Income Statement"
-          >
-            Income Statement
-          </button>
-          <button
-            className={`nav-button ${activeStatement === 'balance' ? 'active' : ''}`}
-            onClick={() => handleStatementChange('balance')}
-            data-tooltip="View Balance Sheet"
-          >
-            Balance Sheet
-          </button>
-          <button
-            className={`nav-button ${activeStatement === 'cashflow' ? 'active' : ''}`}
-            onClick={() => handleStatementChange('cashflow')}
-            data-tooltip="View Cash Flow Statement"
-          >
-            Cash Flow Statement
-          </button>
-        </div>
-
-        <div className="statement-container">
-          {renderStatement()}
-        </div>
-
-        <div className="last-updated">
-          Last updated: {lastUpdated.toLocaleString()}
-        </div>
-      </>
-    );
+  const handleStatementChange = (statement) => {
+    setActiveTab(statement);
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
   };
 
   return (
-    <div className="App">
+    <div className="app">
       <header className="app-header">
         <h1>Interactive Financial Statements</h1>
-        <nav className="main-nav">
-          <button
-            className={`nav-link ${activePage === 'main' ? 'active' : ''}`}
-            onClick={() => setActivePage('main')}
-          >
-            Financial Data
-          </button>
-          <button
-            className={`nav-link ${activePage === 'about' ? 'active' : ''}`}
-            onClick={() => setActivePage('about')}
-          >
-            About
-          </button>
-        </nav>
+        <TickerInput onDataLoaded={handleDataLoaded} />
       </header>
-      
-      {renderContent()}
+
+      <nav className="app-nav">
+        <button
+          className={activeTab === 'balance' ? 'active' : ''}
+          onClick={() => handleStatementChange('balance')}
+        >
+          Balance Sheet
+        </button>
+        <button
+          className={activeTab === 'income' ? 'active' : ''}
+          onClick={() => handleStatementChange('income')}
+        >
+          Income Statement
+        </button>
+        <button
+          className={activeTab === 'cashflow' ? 'active' : ''}
+          onClick={() => handleStatementChange('cashflow')}
+        >
+          Cash Flow
+        </button>
+        <button
+          className={activeTab === 'ratios' ? 'active' : ''}
+          onClick={() => handleStatementChange('ratios')}
+        >
+          Financial Ratios
+        </button>
+        <button
+          className={activeTab === 'about' ? 'active' : ''}
+          onClick={() => handleStatementChange('about')}
+        >
+          About
+        </button>
+        <button
+          className={activeTab === 'settings' ? 'active' : ''}
+          onClick={() => handleStatementChange('settings')}
+        >
+          Settings
+        </button>
+      </nav>
+
+      <main className="app-main">
+        {isLoading ? (
+          <div className="loading-container">
+            <div className="loading"></div>
+          </div>
+        ) : (
+          <>
+            {activeTab === 'balance' && <BalanceSheet initialData={financialData?.balanceSheet} />}
+            {activeTab === 'income' && <IncomeStatement initialData={financialData?.incomeStatement} />}
+            {activeTab === 'cashflow' && <CashFlow initialData={financialData?.cashFlowStatement} />}
+            {activeTab === 'ratios' && <FinancialRatios financialData={financialData} />}
+            {activeTab === 'about' && <About />}
+            {activeTab === 'settings' && <Settings onThemeChange={handleThemeChange} />}
+          </>
+        )}
+      </main>
+
+      <div className="last-updated">
+        Last updated: {lastUpdated.toLocaleString()}
+      </div>
     </div>
   );
 }

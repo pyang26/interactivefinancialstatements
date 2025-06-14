@@ -1,0 +1,128 @@
+.financial-ratios {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.financial-ratios h2 {
+  color: #333333;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.financial-ratios h3 {
+  color: #333333;
+  font-size: 1.5rem;
+  margin: 2rem 0 1rem;
+}
+
+.ratios-intro {
+  color: #333333;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  text-align: center;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ratio-category {
+  margin-bottom: 3rem;
+}
+
+.ratios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.ratio-card {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.ratio-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.ratio-card h4 {
+  color: #333333;
+  font-size: 1.2rem;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.ratio-formula {
+  background-color: #e3f2fd;
+  padding: 1rem;
+  border-radius: 4px;
+  margin: 1rem 0;
+}
+
+.formula-label {
+  color: #666666;
+  font-size: 0.9rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.formula {
+  color: #333333;
+  font-family: monospace;
+  font-size: 1rem;
+}
+
+.ratio-interpretation {
+  color: #333333;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.ratio-calculation {
+  background-color: #e3f2fd;
+  padding: 1rem;
+  border-radius: 4px;
+  margin-top: 1rem;
+}
+
+.calculation-label {
+  color: #666666;
+  font-size: 0.9rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.calculation {
+  color: #333333;
+  font-family: monospace;
+  font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+  .financial-ratios {
+    padding: 1rem;
+  }
+
+  .financial-ratios h2 {
+    font-size: 1.5rem;
+  }
+
+  .financial-ratios h3 {
+    font-size: 1.3rem;
+  }
+
+  .ratios-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ratio-card {
+    padding: 1rem;
+  }
+} 
